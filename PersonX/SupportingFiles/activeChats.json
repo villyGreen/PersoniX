@@ -1,0 +1,52 @@
+[
+    {
+        "username": "Светлана",
+        "userImageString": "human1",
+        "lastMessage": "What are you doing?",
+        "id": 1
+    },
+    {
+        "username": "Джесси",
+        "userImageString": "human2",
+        "lastMessage": "Where are you?",
+        "id": 2
+    },
+    {
+        "username": "Миллиса",
+        "userImageString": "human3",
+        "lastMessage": "Как дела?",
+        "id": 3
+    },
+    {
+        "username": "Сергей",
+        "userImageString": "human4",
+        "lastMessage": "Видел последний матч?",
+        "id": 4
+    },
+    {
+        "username": "Александр",
+        "userImageString": "human5",
+        "lastMessage": "До встречи!",
+        "id": 5
+    },
+    {
+        "username": "Светлана",
+        "userImageString": "human6",
+        "lastMessage": "What are you doing?",
+        "id": 6
+    },
+    {
+        "username": "Джесси",
+        "userImageString": "human7",
+        "lastMessage": "Where are you?",
+        "id": 7
+    },
+    {
+        "username": "Миллиса",
+        "userImageString": "human8",
+        "lastMessage": "Как дела?",
+        "id": 8
+    },
+   
+]
+ 
