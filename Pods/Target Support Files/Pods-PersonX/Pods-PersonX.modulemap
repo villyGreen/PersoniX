@@ -1,0 +1,6 @@
+framework module Pods_PersonX {
+  umbrella header "Pods-PersonX-umbrella.h"
+
+  export *
+  module * { export * }
+}

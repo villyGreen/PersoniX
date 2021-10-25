@@ -44,8 +44,6 @@ class SignUpViewController: UIViewController {
     let secondPasswrodTf = UITextField(fontTf: UIFont(name: "Gill Sans", size: 22))
     var activeTextField : UITextField? = nil
     
-    
-    
     deinit {
         dismiss(animated: true)
     }
@@ -58,12 +56,14 @@ class SignUpViewController: UIViewController {
         setupElements()
         view.backgroundColor = .white
         addNotificationObservers()
+        
     }
     
+    
+    
     @objc private func showDetailVc() {
-        let detailPersonViewController = DetailPersonViewController()
-        detailPersonViewController.modalPresentationStyle = .fullScreen
-        self.present(detailPersonViewController, animated: true)
+        createUser()
+        
     }
     
     private func addNotificationObservers() {
@@ -75,11 +75,53 @@ class SignUpViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    //MARK: Register
+    private func createUser() {
+        guard let email = mailTf.text,let password = passwordTf.text,let confirmPassword = secondPasswrodTf.text else {
+            return
+        }
         
+        if !email.isEmpty && !password.isEmpty && !confirmPassword.isEmpty {
+            guard password == confirmPassword else {
+                createAlert(title: "Ошибка", message: "Введенные вами пароли не совпадают", completion: nil)
+                return
+            }
+            AuthService.shared.register(email: email,
+                                        password: password,
+                                        confirmPassword: confirmPassword) { result in
+                                            switch result {
+                                            case .success(let user):
+                                                self.createAlert(title: "Успешно",
+                                                                 message: "Аккаунт зарегистрирован", completion: { _ in
+                                                                    let vc = DetailPersonViewController(currentUser: user)
+                                                                    vc.modalPresentationStyle = .fullScreen
+                                                                    self.present(vc,
+                                                                                 animated: true,
+                                                                                 completion: nil) })
+                                                
+                                                
+                                                
+                                                
+                                            case .failure(let error):
+                                                self.createAlert(title: "Ошибка",
+                                                                 message: "Попробуйте еще раз!", completion: nil)
+                                                print("Ошибка")
+                                                
+                                            }
+            }
+        } else {
+            createAlert(title: "Ошибка", message: "Все поля должны быть заполнены", completion: nil)
+        }
         
     }
     
+    
 }
+
+
+
 
 
 // MARK: - Setup UIElements and their constraints
@@ -95,7 +137,6 @@ extension SignUpViewController {
         secondPasswrodTf.isSecureTextEntry = true
         
     }
-    
     
     private func setupInputButton() {
         registerButton.addTarget(self, action: #selector(showDetailVc), for: .touchUpInside)
@@ -186,7 +227,5 @@ extension SignUpViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         self.activeTextField = nil
     }
-    
-    
-    
 }
+

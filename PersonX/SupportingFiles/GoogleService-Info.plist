@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>989538176533-12rlvtrubbntsdgu6s13l635r8up167n.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.989538176533-12rlvtrubbntsdgu6s13l635r8up167n</string>
+	<key>API_KEY</key>
+	<string>AIzaSyChnNVbVIIQ8ZEdgtu75prQIHAilu8T6_o</string>
+	<key>GCM_SENDER_ID</key>
+	<string>989538176533</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>-.PersonX</string>
+	<key>PROJECT_ID</key>
+	<string>personix-3e2e1</string>
+	<key>STORAGE_BUCKET</key>
+	<string>personix-3e2e1.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:989538176533:ios:870b44f3a7bdce8d0d481c</string>
+</dict>
+</plist>

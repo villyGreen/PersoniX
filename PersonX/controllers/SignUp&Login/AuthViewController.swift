@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import  Firebase
+import GoogleSignIn
+
 
 class AuthViewController: UIViewController {
     
@@ -57,6 +60,7 @@ class AuthViewController: UIViewController {
     private func setupButtons() {
         mailButton.addTarget(self, action: #selector(showRegisterVC), for: .touchUpInside)
         inputButton.addTarget(self, action: #selector(showInputVc), for: .touchUpInside)
+        googleButton.addTarget(self, action: #selector(googleIn), for: .touchUpInside)
         googleButton.addGoogleLogo()
         mailButton.addMailLogo()
     }
@@ -65,6 +69,43 @@ class AuthViewController: UIViewController {
         
         self.present(signVc, animated: true)
         
+    }
+    @objc private func googleIn() {
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { [unowned self] user, error in
+            if let error = error {
+                return
+            } else {
+                AuthService.shared.googleLogIn(user: user) { (result) in
+                    switch result {
+                        
+                    case .success(let user):
+                        FireStoreService.shared.getUserData(user: user) { (result) in
+                            switch result {
+                                
+                            case .success(let user):
+                                let tabBar = TabBarViewController(user: user)
+                                tabBar.modalPresentationStyle = .fullScreen
+                                self.present(tabBar,
+                                             animated: true,
+                                             completion: nil)
+                            case .failure(let error):
+                                let detailVc = DetailPersonViewController(currentUser: user)
+                                detailVc.modalPresentationStyle = .fullScreen
+                                self.present(detailVc,
+                                             animated: true,
+                                             completion: nil)
+                            }
+                        }
+                    case .failure(let error):
+                        self.createAlert(title: "Ошибка",
+                                    message: error.localizedDescription,
+                                    completion: nil)
+                    }
+                }
+            }
+        }
     }
     
     @objc private func showInputVc () {
@@ -100,14 +141,5 @@ class AuthViewController: UIViewController {
         stackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 80).isActive = true
         stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30).isActive = true
         stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30).isActive = true
-        
-        
-        
-        
     }
-    
-    
-    
 }
-
-
