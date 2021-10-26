@@ -10,21 +10,32 @@ import UIKit
 
 struct ModelChat: Hashable,Decodable  {
     
-    var username: String
-    var userImageString: String
-    var lastMessage: String
-    var id: Int
+    var friendUsername: String
+    var friendUserImageString: String
+    var friendLastMessage: String
+    var friendId: String
     
     
+    var representation: [String : Any] {
+        var rep: [String: Any] = [
+            "friendUsername" : friendUsername,
+            "friendUserImageString" : friendUserImageString,
+            "friendLastMessage" : friendLastMessage,
+            "friendId" : friendId
+        ]
+        
+        return rep
+    }
     
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(friendId)
     }
+    
     static func == (lhs: ModelChat,rhs: ModelChat) -> Bool {
-        return lhs.id == rhs.id
+        return lhs.friendId == rhs.friendId
     }
     
     
-    }
+}
 

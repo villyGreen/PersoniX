@@ -49,6 +49,7 @@
 		3AFD98E82722C32A0077F08D /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFD98E72722C32A0077F08D /* Storage.swift */; };
 		3AFD98EA2722C6DF0077F08D /* UIimage + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFD98E92722C6DF0077F08D /* UIimage + extension.swift */; };
 		3AFD98ED2722E7090077F08D /* Listener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFD98EC2722E7090077F08D /* Listener.swift */; };
+		3AFD98F3272816510077F08D /* messageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFD98F2272816500077F08D /* messageModel.swift */; };
 		D8CDCC75E52B684F256790CC /* Pods_PersonX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40E462B694AAAC5E0B933B52 /* Pods_PersonX.framework */; };
 /* End PBXBuildFile section */
 
@@ -97,6 +98,7 @@
 		3AFD98E72722C32A0077F08D /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		3AFD98E92722C6DF0077F08D /* UIimage + extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIimage + extension.swift"; sourceTree = "<group>"; };
 		3AFD98EC2722E7090077F08D /* Listener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Listener.swift; sourceTree = "<group>"; };
+		3AFD98F2272816500077F08D /* messageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = messageModel.swift; sourceTree = "<group>"; };
 		40E462B694AAAC5E0B933B52 /* Pods_PersonX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PersonX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0BC76BDC6560A357BF5CFF /* Pods-PersonX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PersonX.debug.xcconfig"; path = "Target Support Files/Pods-PersonX/Pods-PersonX.debug.xcconfig"; sourceTree = "<group>"; };
 		BDDF741F9156536D1515B64E /* Pods-PersonX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PersonX.release.xcconfig"; path = "Target Support Files/Pods-PersonX/Pods-PersonX.release.xcconfig"; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 			children = (
 				3AFD98C9271AEEAC0077F08D /* UserModel.swift */,
 				3AFD98CB271AEED00077F08D /* modelChat.swift */,
+				3AFD98F2272816500077F08D /* messageModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -413,6 +416,7 @@
 				3AFD98EA2722C6DF0077F08D /* UIimage + extension.swift in Sources */,
 				3AFD98E0271EA7760077F08D /* resetPasswordViewController.swift in Sources */,
 				3AFD98E2271F07040077F08D /* UserErrors.swift in Sources */,
+				3AFD98F3272816510077F08D /* messageModel.swift in Sources */,
 				3AEC7E8C26D5385E00F252ED /* UItextField + Extension.swift in Sources */,
 				3A4CB5E826D4D5B70083E688 /* AuthViewController.swift in Sources */,
 				3AEC7E8A26D531A900F252ED /* SignUpViewController.swift in Sources */,

@@ -47,9 +47,9 @@ class ActiveChatsCollectionViewCell: UICollectionViewCell,CellConfiguring {
         return
         }
         
-        imageView.image = UIImage(named: activeChat.userImageString)
-               userName.text = activeChat.username
-               lastMessage.text = activeChat.lastMessage
+//        imageView.image = UIImage(named: activeChat.userImageString)
+//               userName.text = activeChat.username
+//               lastMessage.text = activeChat.lastMessage
        }
     
     

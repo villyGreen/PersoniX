@@ -111,6 +111,17 @@ class ProfileViewController: UIViewController {
     
     @objc private func sendMessage() {
         guard let message = textField.text,message != ""  else { return }
+        FireStoreService.shared.createWaitingChat(message: message, receiver: user!) { (result) in
+            switch result {
+                
+            case .success():
+                print("success")
+            case .failure(let error):
+                self.createAlert(title: "Ошибка",
+                                 message: error.localizedDescription,
+                                 completion: nil)
+            }
+        }
         self.dismiss(animated: true, completion: nil)
         
     }

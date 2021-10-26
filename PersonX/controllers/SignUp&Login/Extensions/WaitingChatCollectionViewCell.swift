@@ -22,7 +22,7 @@ class WaitingChatCollectionViewCell: UICollectionViewCell,CellConfiguring {
     guard let waitingChat: ModelChat = value as? ModelChat else {
               return
               }
-         imageView.image = UIImage(named: waitingChat.userImageString)
+//         imageView.image = UIImage(named: waitingChat.userImageString)
     }
     
     override init(frame: CGRect) {

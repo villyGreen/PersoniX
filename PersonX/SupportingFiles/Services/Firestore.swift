@@ -14,16 +14,17 @@ class FireStoreService {
     
     static let shared = FireStoreService()
     let db = Firestore.firestore()
-
+    
     
     var userRef: CollectionReference {
         return db.collection("users")
     }
     
-
+    var currentUser: ModelUser?
+    
     func getUserData(user: User, completion: @escaping ((Result<ModelUser,Error>) -> Void)) {
         let documentUser = userRef.document(user.uid)
-      
+        
         documentUser.getDocument { (document, error) in
             guard let document = document, document.exists else {
                 completion(.failure(UserError.notFoundUser))
@@ -33,7 +34,38 @@ class FireStoreService {
                 completion(.failure(UserError.ConvertDocumentError))
                 return
             }
+            self.currentUser = user
             completion(.success(user))
+        }
+    }
+    
+    
+    
+    func createWaitingChat(message: String, receiver: ModelUser, completion: @escaping ((Result<Void,Error>) -> Void)) {
+        
+        let reference = db.collection(["users",receiver.id,"WaitingChats"].joined(separator: "/"))
+        var messageRef = reference.document(currentUser!.id).collection("messages")
+        let message = ModelMessage(user: currentUser!, content: message)
+        
+        let chat = ModelChat(friendUsername: currentUser!.username,
+                             friendUserImageString: currentUser!.avatarStringURL,
+                             friendLastMessage: message.content,
+                             friendId: currentUser!.id)
+        
+        reference.document(currentUser!.id).setData(chat.representation) { (error) in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            messageRef.addDocument(data: message.representation) { (error) in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                
+            }
+            completion(.success(Void()))
+            
         }
     }
     
@@ -61,12 +93,12 @@ class FireStoreService {
             case .success(let url):
                 user.avatarStringURL = url.absoluteString
                 self.userRef.document(user.id).setData(user.representation) { error in
-                           if let error = error {
-                               completion(.failure(error))
-                           } else {
-                               completion(.success(user))
-                           }
-                       }
+                    if let error = error {
+                        completion(.failure(error))
+                    } else {
+                        completion(.success(user))
+                    }
+                }
             case .failure(let error):
                 completion(.failure(error))
             }
