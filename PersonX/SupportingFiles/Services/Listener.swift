@@ -20,6 +20,7 @@ class ListenerService {
     }
     
     let currentUserId = Auth.auth().currentUser?.uid
+    
     func userObserve(user: [ModelUser],completion: @escaping (Result<[ModelUser],Error>) -> Void) -> ListenerRegistration? {
         var users = user
         let userListener = reference.addSnapshotListener { (querySnapshot, error) in
@@ -29,16 +30,12 @@ class ListenerService {
             }
             snapshot.documentChanges.forEach { (diff) in
                 guard let muser = ModelUser(document: diff.document) else { return }
-                print("muser email = \(muser.email)")
-                   print("muser email = \(muser.avatarStringURL)")
-                print("currentId = \(self.currentUserId)")
-            
+                
                 
                 switch diff.type {
                 case .added:
                     guard Auth.auth().currentUser?.email != muser.email else { break }
                     users.append(muser)
-                    print("userCount = \(users.count)")
                 case .modified:
                     guard let index = users.firstIndex(of: muser) else { return }
                     users[index] = muser
@@ -51,5 +48,44 @@ class ListenerService {
         }
         return userListener
     }
+    
+    
+    
+    
+    func waitingChatListener(chat: [ModelChat],completion: @escaping ((Result<[ModelChat],Error>) -> Void)  ) -> ListenerRegistration {
+        var chats = chat
+        let reference = db.collection(["users",currentUserId!,"WaitingChats"].joined(separator: "/"))
+        let chatListener = reference.addSnapshotListener { (querySnapshot, error) in
+            
+            guard let snapshot = querySnapshot else {
+                completion(.failure(error!))
+                return
+            }
+            snapshot.documentChanges.forEach { diff in
+                guard let chat = ModelChat(document: diff.document) else { return }
+                print(chat.friendUsername)
+                 print(chat.friendLastMessage)
+                switch diff.type {
+                case .added:
+                    guard !chats.contains(chat) else { return }
+                    chats.append(chat)
+                case .modified:
+                    guard let index = chats.firstIndex(of: chat) else { return }
+                    chats[index] = chat
+                case .removed:
+                    guard let index = chats.firstIndex(of: chat) else { return }
+                    chats.remove(at: index)
+                }
+                
+            }
+            completion(.success(chats))
+        }
+        
+        return chatListener
+    }
+    
+    
+    
+    
     
 }

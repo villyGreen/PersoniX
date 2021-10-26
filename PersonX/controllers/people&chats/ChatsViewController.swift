@@ -7,11 +7,12 @@
 //
 
 import UIKit
-
+import FirebaseFirestore
 
 class ChatsViewController: UIViewController {
     
     let Muser: ModelUser
+    var chatsListener: ListenerRegistration?
     
     enum Section: Int,CaseIterable {
         case waitingChat
@@ -31,14 +32,18 @@ class ChatsViewController: UIViewController {
     var collectionView: UICollectionView?
     var dataSource:UICollectionViewDiffableDataSource<Section, ModelChat>?
     
-    let activeChats = [ModelChat]()
-    let waitingChats = [ModelChat]()
+    var activeChats = [ModelChat]()
+    var waitingChats = [ModelChat]()
     
     
     init(user:ModelUser) {
         self.Muser = user
         super.init(nibName: nil, bundle: nil)
-          title = "\(Muser.username)"
+        title = "\(Muser.username)"
+    }
+    
+    deinit {
+        chatsListener?.remove()
     }
     
     required init?(coder: NSCoder) {
@@ -51,6 +56,8 @@ class ChatsViewController: UIViewController {
         setupCollectionnView()
         setupCollectionViewDataSource()
         reloadData()
+        setupChatsListener()
+        
         
     }
     //MARK: Setup View
@@ -67,6 +74,24 @@ class ChatsViewController: UIViewController {
         searchController.obscuresBackgroundDuringPresentation  = false
         searchController.searchBar.delegate = self
     }
+    
+    private func setupChatsListener() {
+        chatsListener = ListenerService.shared.waitingChatListener(chat: waitingChats, completion: { (result) in
+            switch result {
+                
+            case .success(let chats):
+                self.waitingChats = chats
+                self.reloadData()
+                print(self.waitingChats.count)
+            case .failure(let error):
+                self.createAlert(title: "Ошибка",
+                                 message: error.localizedDescription,
+                                 completion: nil)
+            }
+        })
+    }
+    
+    
 }
 
 extension ChatsViewController {
