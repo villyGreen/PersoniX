@@ -7,3 +7,10 @@
 //
 
 import Foundation
+
+
+
+protocol WaitingChatProtocol: class {
+    func removeWaitingChat(chat: ModelChat)
+    func transformToActiveChat(chat: ModelChat)
+}

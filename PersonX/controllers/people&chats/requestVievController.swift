@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import SDWebImage
 
 
 
@@ -18,6 +18,8 @@ class RequetsViewController: UIViewController {
     let containerView = UIView()
     let nameLabel = UILabel()
     let warningLabel = UILabel()
+    var chat: ModelChat?
+    weak var delegate: WaitingChatProtocol?
     let acceptButton = UIButton(title: "Принять",
                                 textColor: .white,
                                 BC: #colorLiteral(red: 0.4734251262, green: 1, blue: 0.1964273022, alpha: 1),
@@ -40,7 +42,39 @@ class RequetsViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupConstraints()
+        setupButtons()
     }
+    
+    init(chat: ModelChat) {
+        super.init(nibName: nil, bundle: nil)
+        self.chat = chat
+        var imageUrl = URL(string: chat.friendUserImageString)
+        self.image.sd_setImage(with: imageUrl, completed: nil)
+        nameLabel.text = chat.friendUsername
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupButtons() {
+        
+        denyButton.addTarget(self ,action: #selector(denyAction), for: .touchUpInside)
+        acceptButton.addTarget(self, action: #selector(acceptAction), for: .touchUpInside)
+    }
+    
+    
+    @objc private func denyAction() {
+        self.dismiss(animated: true, completion: nil)
+        delegate?.removeWaitingChat(chat: chat!)
+    }
+    
+    @objc private func acceptAction() {
+        self.dismiss(animated: true, completion: nil)
+        delegate?.transformToActiveChat(chat: chat!)
+    }
+    
     
     private func setupConstraints() {
         
@@ -50,7 +84,7 @@ class RequetsViewController: UIViewController {
         containerView.addSubview(warningLabel)
       
         
-               image.image = #imageLiteral(resourceName: "human6")
+           
                image.contentMode = .scaleAspectFill
                image.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
                image.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
@@ -73,12 +107,12 @@ class RequetsViewController: UIViewController {
         containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         containerView.heightAnchor.constraint(equalToConstant: 206).isActive = true
         
-        nameLabel.text = "Julia Beria"
+       
         nameLabel.font = UIFont.systemFont(ofSize: 25, weight: .light)
         
         nameLabel.textColor = .black
         
-        warningLabel.text = "Принять запрос на общение?"
+    
         warningLabel.font = UIFont.systemFont(ofSize: 20, weight: .ultraLight)
         warningLabel.textColor = .black
         warningLabel.numberOfLines = 0
@@ -87,7 +121,7 @@ class RequetsViewController: UIViewController {
          nameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 30).isActive = true
          nameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 30).isActive = true
         
-        
+        warningLabel.text = "Принять запрос на общение?"
             warningLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8).isActive = true
         warningLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 30).isActive = true
         warningLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 30).isActive = true

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class WaitingChatCollectionViewCell: UICollectionViewCell,CellConfiguring {
     
@@ -14,15 +15,14 @@ class WaitingChatCollectionViewCell: UICollectionViewCell,CellConfiguring {
     static var reuseID = "WaitingChatCell"
     let imageView = UIImageView()
     
-//    func configure(value: ModelChat) {
-//        imageView.image = UIImage(named: value.userImageString)
-//    }
+
     
     func configure<U>(value: U) where U : Hashable {
     guard let waitingChat: ModelChat = value as? ModelChat else {
               return
               }
-//         imageView.image = UIImage(named: waitingChat.userImageString)
+        let imageUrl = URL(string: waitingChat.friendUserImageString)
+        imageView.sd_setImage(with: imageUrl, completed: nil)
     }
     
     override init(frame: CGRect) {
@@ -33,6 +33,7 @@ class WaitingChatCollectionViewCell: UICollectionViewCell,CellConfiguring {
     }
     
     private func constraints() {
+        imageView.contentMode  = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(imageView)
         imageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
