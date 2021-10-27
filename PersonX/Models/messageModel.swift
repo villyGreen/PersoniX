@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
 
 
@@ -24,12 +25,29 @@ struct ModelMessage: Hashable {
         var rep: [String: Any] = [
             "senderId" : senderId,
             "sendTime" : sendTime,
-            "senderUserName" : senderUsername,
+            "senderUsername" : senderUsername,
             "content" : content
         ]
         
         return rep
     }
+    
+    
+    
+    init?(document:QueryDocumentSnapshot) {
+        let data = document.data() 
+        guard let senderId = data["senderId"] as? String else { return nil}
+        guard let sendTime = data["sendTime"] as? Date else { return nil}
+        guard let senderUserName = data["senderUserName"] as? String else { return nil}
+        guard let content = data["content"] as? String else { return nil}
+        
+        self.content = content
+        self.senderUsername = senderUserName
+        self.sendTime = sendTime
+        self.senderId = senderId
+        
+    }
+    
     
     init(user: ModelUser,content: String) {
         self.content = content
