@@ -72,6 +72,7 @@ class RequetsViewController: UIViewController {
     
     @objc private func acceptAction() {
         self.dismiss(animated: true, completion: nil)
+        
         delegate?.transformToActiveChat(chat: chat!)
     }
     
