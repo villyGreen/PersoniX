@@ -33,6 +33,18 @@ struct ModelMessage: Hashable {
     }
     
     
+    var messageId: String {
+          return id ?? UUID().uuidString
+      }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(messageId)
+    }
+    
+    static func == (lhs: ModelMessage, rhs: ModelMessage) -> Bool {
+        return lhs.messageId == rhs.messageId
+    }
+    
     
     init?(document:QueryDocumentSnapshot) {
         let data = document.data() 
@@ -56,6 +68,16 @@ struct ModelMessage: Hashable {
         senderUsername = user.username
         id = nil
     }
+    
+    
+    
+//    func hash(into hasher: inout Hasher) {
+//           hasher.combine(id)
+//       }
+//       
+//       static func == (lhs: ModelMessage,rhs: ModelMessage) -> Bool {
+//           return lhs.id == rhs.id
+//    }
     
     
 }
