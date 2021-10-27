@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
 struct ModelChat: Hashable,Decodable  {
     
@@ -25,6 +26,28 @@ struct ModelChat: Hashable,Decodable  {
         ]
         
         return rep
+    }
+    
+    
+    init?(document:DocumentSnapshot) {
+        guard let data = document.data() else { return nil}
+        guard let friendUsername = data["friendUsername"] as? String else { return nil}
+        guard let friendUserImageString = data["friendUserImageString"] as? String else { return nil}
+        guard let friendLastMessage = data["friendLastMessage"] as? String else { return nil}
+        guard let friendId = data["friendId"] as? String else { return nil}
+        
+        self.friendUsername = friendUsername
+               self.friendUserImageString = friendUserImageString
+               self.friendLastMessage = friendLastMessage
+               self.friendId = friendId
+        
+    }
+    
+    init(friendUsername: String,friendUserImageString: String,friendLastMessage: String,friendId: String) {
+        self.friendUsername = friendUsername
+        self.friendUserImageString = friendUserImageString
+        self.friendLastMessage = friendLastMessage
+        self.friendId = friendId
     }
     
     
