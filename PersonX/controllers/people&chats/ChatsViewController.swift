@@ -62,6 +62,7 @@ class ChatsViewController: UIViewController {
     }
     //MARK: Setup View
     private func setupView() {
+       
         view.backgroundColor = .white
         navigationController?.navigationBar.titleTextAttributes = [.font:
             UIFont.systemFont(ofSize: 20, weight: .light)]
@@ -80,9 +81,14 @@ class ChatsViewController: UIViewController {
             switch result {
                 
             case .success(let chats):
+                if self.waitingChats.count <= chats.count && chats.count > 0 {
+                    
+                    let requestVc = RequetsViewController(chat: chats.last!)
+                    requestVc.delegate = self
+                    self.present(requestVc, animated: true, completion: nil)
+                }
                 self.waitingChats = chats
                 self.reloadData()
-                print(self.waitingChats.count)
             case .failure(let error):
                 self.createAlert(title: "Ошибка",
                                  message: error.localizedDescription,
@@ -104,7 +110,7 @@ extension ChatsViewController {
         collectionView!.autoresizingMask = [.flexibleWidth,.flexibleHeight]
         collectionView!.backgroundColor = #colorLiteral(red: 0.968627451, green: 0.9764705882, blue: 1, alpha: 1)
         view.addSubview(collectionView!)
-        
+           collectionView?.delegate = self
         collectionView?.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader , withReuseIdentifier: SectionHeader.reuseId)
         collectionView?.register(ActiveChatsCollectionViewCell.self,
                                  forCellWithReuseIdentifier: ActiveChatsCollectionViewCell.reuseID)
@@ -229,4 +235,55 @@ extension ChatsViewController : UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         print(searchText)
     }
+}
+
+
+extension ChatsViewController: UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+         print("\(indexPath)")
+        guard let chat = self.dataSource?.itemIdentifier(for: indexPath) as? ModelChat else { return }
+        guard let section = Section(rawValue: indexPath.section) else { return }
+        
+        
+        switch section {
+            
+        case .waitingChat:
+        
+            let requestVc = RequetsViewController(chat: chat)
+            requestVc.delegate = self
+            self.present(requestVc, animated: true, completion: nil)
+        case .activeChat:
+            print("gg")
+        }
+    }
+    
+    
+}
+
+
+extension ChatsViewController: WaitingChatProtocol {
+    
+    func removeWaitingChat(chat: ModelChat) {
+        FireStoreService.shared.deleteWaitingChat(chat: chat) { (result) in
+            switch result {
+                
+            case .success():
+                print(" ")
+            case .failure(let error):
+                self.createAlert(title: "Ошибка",
+                                 message: error.localizedDescription,
+                                 completion: nil)
+            }
+        }
+    }
+    
+    func transformToActiveChat(chat: ModelChat) {
+        print("gg")
+    }
+    
+    
+    
+    
+    
 }
