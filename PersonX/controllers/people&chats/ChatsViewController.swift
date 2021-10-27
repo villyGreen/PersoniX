@@ -279,7 +279,17 @@ extension ChatsViewController: WaitingChatProtocol {
     }
     
     func transformToActiveChat(chat: ModelChat) {
-        print("gg")
+        FireStoreService.shared.changeToActive(chat: chat) { (result) in
+            switch result {
+                
+            case .success():
+                print(" ")
+            case .failure(let error):
+                self.createAlert(title: "Ошибка",
+                                 message: error.localizedDescription,
+                                 completion: nil)
+            }
+        }
     }
     
     
