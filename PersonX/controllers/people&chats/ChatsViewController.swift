@@ -12,7 +12,8 @@ import FirebaseFirestore
 class ChatsViewController: UIViewController {
     
     let Muser: ModelUser
-    var chatsListener: ListenerRegistration?
+    var waitingChatsListener: ListenerRegistration?
+    var activeChatsListener: ListenerRegistration?
     
     enum Section: Int,CaseIterable {
         case waitingChat
@@ -43,7 +44,8 @@ class ChatsViewController: UIViewController {
     }
     
     deinit {
-        chatsListener?.remove()
+        waitingChatsListener?.remove()
+        activeChatsListener?.remove()
     }
     
     required init?(coder: NSCoder) {
@@ -56,8 +58,8 @@ class ChatsViewController: UIViewController {
         setupCollectionnView()
         setupCollectionViewDataSource()
         reloadData()
-        setupChatsListener()
-        
+        setupWaitingChatsListener()
+        setupActiveChatsListener()
         
     }
     //MARK: Setup View
@@ -76,8 +78,8 @@ class ChatsViewController: UIViewController {
         searchController.searchBar.delegate = self
     }
     
-    private func setupChatsListener() {
-        chatsListener = ListenerService.shared.waitingChatListener(chat: waitingChats, completion: { (result) in
+    private func setupWaitingChatsListener() {
+        waitingChatsListener = ListenerService.shared.waitingChatListener(chat: waitingChats, completion: { (result) in
             switch result {
                 
             case .success(let chats):
@@ -88,6 +90,22 @@ class ChatsViewController: UIViewController {
                     self.present(requestVc, animated: true, completion: nil)
                 }
                 self.waitingChats = chats
+                self.reloadData()
+            case .failure(let error):
+                self.createAlert(title: "Ошибка",
+                                 message: error.localizedDescription,
+                                 completion: nil)
+            }
+        })
+    }
+    
+    
+    private func setupActiveChatsListener() {
+        activeChatsListener = ListenerService.shared.activeChatListener(chat: activeChats, completion: { (result) in
+            switch result {
+                
+            case .success(let messages):
+                self.activeChats = messages
                 self.reloadData()
             case .failure(let error):
                 self.createAlert(title: "Ошибка",
@@ -241,7 +259,7 @@ extension ChatsViewController : UISearchBarDelegate {
 extension ChatsViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-         print("\(indexPath)")
+         
         guard let chat = self.dataSource?.itemIdentifier(for: indexPath) as? ModelChat else { return }
         guard let section = Section(rawValue: indexPath.section) else { return }
         
