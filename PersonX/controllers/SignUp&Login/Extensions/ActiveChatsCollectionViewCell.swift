@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class ActiveChatsCollectionViewCell: UICollectionViewCell,CellConfiguring {
  
@@ -47,9 +48,13 @@ class ActiveChatsCollectionViewCell: UICollectionViewCell,CellConfiguring {
         return
         }
         
-//        imageView.image = UIImage(named: activeChat.userImageString)
-//               userName.text = activeChat.username
-//               lastMessage.text = activeChat.lastMessage
+        guard let imageUrl = URL(string: activeChat.friendUserImageString) else { return }
+        imageView.sd_setImage(with: imageUrl, completed: nil)
+        userName.text = activeChat.friendUsername
+        lastMessage.text = activeChat.friendLastMessage
+        
+        
+      
        }
     
     
