@@ -37,25 +37,27 @@ struct ModelMessage: Hashable {
           return id ?? UUID().uuidString
       }
     
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(messageId)
-    }
-    
-    static func == (lhs: ModelMessage, rhs: ModelMessage) -> Bool {
-        return lhs.messageId == rhs.messageId
-    }
+//    func hash(into hasher: inout Hasher) {
+//        hasher.combine(messageId)
+//    }
+//
+//    static func == (lhs: ModelMessage, rhs: ModelMessage) -> Bool {
+//        return lhs.messageId == rhs.messageId
+//    }
     
     
     init?(document:QueryDocumentSnapshot) {
-        let data = document.data() 
-        guard let senderId = data["senderId"] as? String else { return nil}
-        guard let sendTime = data["sendTime"] as? Date else { return nil}
-        guard let senderUserName = data["senderUserName"] as? String else { return nil}
-        guard let content = data["content"] as? String else { return nil}
         
+        let data = document.data()
+        guard let senderId = data["senderId"] as? String else { return nil}
+        guard let sendTime = data["sendTime"] as? Timestamp else { return nil}
+        guard let senderUserName = data["senderUsername"] as? String else { return nil}
+        guard let content = data["content"] as? String else { return nil}
+   
+        self.id = document.documentID
         self.content = content
         self.senderUsername = senderUserName
-        self.sendTime = sendTime
+        self.sendTime = sendTime.dateValue()
         self.senderId = senderId
         
     }
