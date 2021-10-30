@@ -21,7 +21,7 @@ class FireStoreService {
     }
     
     private var waitingChatsRef: CollectionReference {
-        return db.collection(["users", currentUser.id, "waitingChats"].joined(separator: "/"))
+        return db.collection(["users",currentUser.id,"WaitingChats"].joined(separator: "/"))
     }
     
     private var activeChatsRef: CollectionReference {
@@ -55,7 +55,7 @@ class FireStoreService {
         let reference = db.collection(["users",receiver.id,"WaitingChats"].joined(separator: "/"))
         var messageRef = reference.document(currentUser!.id).collection("messages")
         let message = ModelMessage(user: currentUser!, content: message)
-        print(message.id)
+        print(" messahe id \(message.id)")
         
         let chat = ModelChat(friendUsername: currentUser!.username,
                              friendUserImageString: currentUser!.avatarStringURL,
@@ -79,18 +79,22 @@ class FireStoreService {
         }
     }
     
+    
+    
     func deleteWaitingChat(chat: ModelChat, completion: @escaping ((Result<Void,Error>) -> Void)) {
-        print("1")
+ 
         let reference = db.collection(["users",currentUser!.id,"WaitingChats"].joined(separator: "/"))
-        reference.document(chat.friendId).delete { (error) in
-            
-            if let error = error {
-                completion(.failure(error))
-         
-                return
-            }
-  
-            self.deleteMessages(chat: chat, completion: completion)
+        
+       
+                reference.document(chat.friendId).delete { (error) in
+                   
+                   if let error = error {
+                       completion(.failure(error))
+                       return
+                   }
+                    self.deleteMessages(chat: chat, completion: completion)
+                    completion(.success(Void()))
+    
         }
     }
     
@@ -103,8 +107,12 @@ class FireStoreService {
             switch result {
                 
             case .success(let messages):
+                print(messages.count)
                 for message in messages {
-                    guard let documentId = message.id else { return }
+                    print("1")
+                    //ERROR |
+                       //  \ /
+                    guard let documentId = message.id else { print("Error blya"); return }
                     let messageRef = reference.document(documentId)
                     messageRef.delete { (error) in
                         if let error = error {
@@ -122,18 +130,24 @@ class FireStoreService {
     
     
     func getWaitingChatMessages(chat: ModelChat, completion: @escaping (Result<[ModelMessage], Error>) -> Void) {
+        print(chat.friendId)
         let reference = waitingChatsRef.document(chat.friendId).collection("messages")
         var messages = [ModelMessage]()
+
         reference.getDocuments { (querySnapshot, error) in
+         
             if let error = error {
                 completion(.failure(error))
                 return
             }
+     
+ 
             for document in querySnapshot!.documents {
                 guard let message = ModelMessage(document: document) else { return }
                 messages.append(message)
             }
             completion(.success(messages))
+           
         }
     }
     
