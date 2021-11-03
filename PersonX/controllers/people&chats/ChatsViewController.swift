@@ -272,7 +272,8 @@ extension ChatsViewController: UICollectionViewDelegate {
             requestVc.delegate = self
             self.present(requestVc, animated: true, completion: nil)
         case .activeChat:
-            print("gg")
+            let vc = ChatViewController(user: Muser, chat: chat)
+            navigationController?.pushViewController(vc, animated: true)
         }
     }
     

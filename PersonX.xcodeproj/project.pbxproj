@@ -11,6 +11,7 @@
 		3A4CB5E626D4D5B70083E688 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4CB5E526D4D5B70083E688 /* SceneDelegate.swift */; };
 		3A4CB5E826D4D5B70083E688 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4CB5E726D4D5B70083E688 /* AuthViewController.swift */; };
 		3A4CB5F026D4D5C20083E688 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A4CB5EE26D4D5C20083E688 /* LaunchScreen.storyboard */; };
+		3A5D31A02731A10300E5BA61 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5D319F2731A10300E5BA61 /* ChatViewController.swift */; };
 		3AEC7E8026D4FC7C00F252ED /* Uibutton + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC7E7F26D4FC7C00F252ED /* Uibutton + Extension.swift */; };
 		3AEC7E8226D5010900F252ED /* UILable + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC7E8126D5010900F252ED /* UILable + Extension.swift */; };
 		3AEC7E8426D503B800F252ED /* UIIimageView + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEC7E8326D503B800F252ED /* UIIimageView + Extension.swift */; };
@@ -61,6 +62,7 @@
 		3A4CB5E726D4D5B70083E688 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		3A4CB5EF26D4D5C20083E688 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3A4CB5F126D4D5C20083E688 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3A5D319F2731A10300E5BA61 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		3AEC7E7F26D4FC7C00F252ED /* Uibutton + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Uibutton + Extension.swift"; sourceTree = "<group>"; };
 		3AEC7E8126D5010900F252ED /* UILable + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILable + Extension.swift"; sourceTree = "<group>"; };
 		3AEC7E8326D503B800F252ED /* UIIimageView + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIIimageView + Extension.swift"; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 				3AEC7E9626D9468900F252ED /* PeopleViewController.swift */,
 				3AEC7E9826D9469900F252ED /* ChatsViewController.swift */,
 				3AEC7E9E26D9493B00F252ED /* TabBarViewController.swift */,
+				3A5D319F2731A10300E5BA61 /* ChatViewController.swift */,
 				3AFD98D9271DAA590077F08D /* requestVievController.swift */,
 				3AFD98D3271B444B0077F08D /* ProfileViewController.swift */,
 			);
@@ -435,6 +438,7 @@
 				3AFD98D4271B444B0077F08D /* ProfileViewController.swift in Sources */,
 				3AEC7EA926E1FF6900F252ED /* GradientView.swift in Sources */,
 				3AFD98ED2722E7090077F08D /* Listener.swift in Sources */,
+				3A5D31A02731A10300E5BA61 /* ChatViewController.swift in Sources */,
 				3AFD98CA271AEEAC0077F08D /* UserModel.swift in Sources */,
 				3AFD98CC271AEED00077F08D /* modelChat.swift in Sources */,
 				3AFD98C7271ABD660077F08D /* Section Header.swift in Sources */,

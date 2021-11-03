@@ -13,7 +13,7 @@ import SDWebImage
 
 class RequetsViewController: UIViewController {
     
- 
+    
     let image = UIImageView()
     let containerView = UIView()
     let nameLabel = UILabel()
@@ -35,7 +35,7 @@ class RequetsViewController: UIViewController {
                               font: UIFont(name: "Avenir",
                                            size: 18))
     
-   
+    
     
     
     override func viewDidLoad() {
@@ -79,17 +79,17 @@ class RequetsViewController: UIViewController {
     private func setupConstraints() {
         
         view.addSubview(image)
-         view.addSubview(containerView)
+        view.addSubview(containerView)
         containerView.addSubview(nameLabel)
         containerView.addSubview(warningLabel)
-      
         
-           
-               image.contentMode = .scaleAspectFill
-               image.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-               image.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-               image.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-               image.bottomAnchor.constraint(equalTo: containerView.topAnchor, constant: 30).isActive = true
+        
+        
+        image.contentMode = .scaleAspectFill
+        image.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        image.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        image.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        image.bottomAnchor.constraint(equalTo: containerView.topAnchor, constant: 30).isActive = true
         
         containerView.translatesAutoresizingMaskIntoConstraints = false
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -97,7 +97,7 @@ class RequetsViewController: UIViewController {
         warningLabel.translatesAutoresizingMaskIntoConstraints = false
         acceptButton.translatesAutoresizingMaskIntoConstraints = false
         denyButton.translatesAutoresizingMaskIntoConstraints = false
-       
+        
         
         containerView.layer.cornerRadius = 30
         containerView.backgroundColor = #colorLiteral(red: 0.968990624, green: 0.9776130319, blue: 0.9988356233, alpha: 1)
@@ -107,28 +107,28 @@ class RequetsViewController: UIViewController {
         containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         containerView.heightAnchor.constraint(equalToConstant: 206).isActive = true
         
-       
+        
         nameLabel.font = UIFont.systemFont(ofSize: 25, weight: .light)
         
         nameLabel.textColor = .black
         
-    
+        
         warningLabel.font = UIFont.systemFont(ofSize: 20, weight: .ultraLight)
         warningLabel.textColor = .black
         warningLabel.numberOfLines = 0
         
         nameLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 30).isActive = true
-         nameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 30).isActive = true
-         nameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 30).isActive = true
+        nameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 30).isActive = true
+        nameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 30).isActive = true
         
         warningLabel.text = "Принять запрос на общение?"
-            warningLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8).isActive = true
+        warningLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8).isActive = true
         warningLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 30).isActive = true
         warningLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 30).isActive = true
         denyButton.layer.borderWidth = 1.2
         denyButton.layer.borderColor = #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1)
         
-       let buttonStackView = UIStackView(arrangedSubviews: [acceptButton,denyButton])
+        let buttonStackView = UIStackView(arrangedSubviews: [acceptButton,denyButton])
         containerView.addSubview(buttonStackView)
         buttonStackView.translatesAutoresizingMaskIntoConstraints = false
         buttonStackView.axis = .horizontal
@@ -140,7 +140,4 @@ class RequetsViewController: UIViewController {
         buttonStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 15).isActive = true
         buttonStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -15).isActive = true
     }
-    
-    
-    
 }

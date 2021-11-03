@@ -8,24 +8,26 @@
 
 import UIKit
 import FirebaseFirestore
+import MessageKit
 
 
 
 
-
-struct ModelMessage: Hashable {
+struct ModelMessage: Hashable, MessageType {
     
+    
+    
+    
+    var sender: SenderType
+    var sentDate: Date
     var content: String
-    var senderId : String
-    var sendTime: Date
-    var senderUsername: String
     var id: String?
     
     var representation: [String : Any] {
         var rep: [String: Any] = [
-            "senderId" : senderId,
-            "sendTime" : sendTime,
-            "senderUsername" : senderUsername,
+            "senderId" : sender.senderId,
+            "sentDate" : sentDate,
+            "senderUsername" : sender.displayName,
             "content" : content
         ]
         
@@ -33,17 +35,22 @@ struct ModelMessage: Hashable {
     }
     
     
-    var messageId: String {
-          return id ?? UUID().uuidString
-      }
+    var kind: MessageKind {
+        return .text(content)
+    }
     
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(messageId)
-//    }
-//
-//    static func == (lhs: ModelMessage, rhs: ModelMessage) -> Bool {
-//        return lhs.messageId == rhs.messageId
-//    }
+    var messageId: String {
+        return id ?? UUID().uuidString
+    }
+    
+    
+    static func == (lhs: ModelMessage, rhs: ModelMessage) -> Bool {
+        return lhs.messageId == rhs.messageId
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(messageId)
+    }
     
     
     init?(document:QueryDocumentSnapshot) {
@@ -53,33 +60,31 @@ struct ModelMessage: Hashable {
         guard let sendTime = data["sendTime"] as? Timestamp else { return nil}
         guard let senderUserName = data["senderUsername"] as? String else { return nil}
         guard let content = data["content"] as? String else { return nil}
-   
+        
         self.id = document.documentID
         self.content = content
-        self.senderUsername = senderUserName
-        self.sendTime = sendTime.dateValue()
-        self.senderId = senderId
+        self.sender = Sender(senderId: senderId, displayName: senderUserName)
+        self.sentDate = sendTime.dateValue()
         
     }
     
     
     init(user: ModelUser,content: String) {
         self.content = content
-        senderId = user.id
-        sendTime = Date()
-        senderUsername = user.username
+        self.sender = Sender(senderId: user.id, displayName: user.username)
+        sentDate = Date()
         id = nil
     }
     
     
     
-//    func hash(into hasher: inout Hasher) {
-//           hasher.combine(id)
-//       }
-//       
-//       static func == (lhs: ModelMessage,rhs: ModelMessage) -> Bool {
-//           return lhs.id == rhs.id
-//    }
+    //    func hash(into hasher: inout Hasher) {
+    //           hasher.combine(id)
+    //       }
+    //
+    //       static func == (lhs: ModelMessage,rhs: ModelMessage) -> Bool {
+    //           return lhs.id == rhs.id
+    //    }
     
     
 }
