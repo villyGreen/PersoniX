@@ -8,7 +8,7 @@
 
 import UIKit
 import MessageKit
-
+import InputBarAccessoryView
 
 
 
@@ -17,7 +17,7 @@ class ChatViewController: MessagesViewController {
     
     
     
-    let messages = [ModelMessage]()
+    var messages = [ModelMessage]()
     var user: ModelUser
     var chat: ModelChat
     
@@ -27,11 +27,19 @@ class ChatViewController: MessagesViewController {
         self.chat = chat
         super.init(nibName: nil, bundle: nil)
         title = user.username
-    
+        
     }
     
     
+    //    init(message:ModelMessage) {
+    //        self.insertNewMEssage(message: message)
+    //    }
     
+    private func insertNewMEssage(message: ModelMessage) {
+        guard !messages.contains(message) else { return }
+        messages.append(message)
+        messages.sort()
+    }
     
     
     required init?(coder: NSCoder) {
@@ -42,13 +50,14 @@ class ChatViewController: MessagesViewController {
         super.viewDidLoad()
         configureSendButton()
         configureMessageInputBar()
-        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 1, green: 0.9590643066, blue: 0.9127125684, alpha: 1)
-        view.backgroundColor = #colorLiteral(red: 1, green: 0.9590643066, blue: 0.9127125684, alpha: 1)
+        messageInputBar.delegate = self
+        messagesCollectionView.messagesDataSource = self
+        messagesCollectionView.messagesLayoutDelegate = self
+        messagesCollectionView.messagesDisplayDelegate = self
+//        inputView?.backgroundColor = .
+        
     }
 }
-
-
-
 
 extension  ChatViewController: MessagesDataSource,MessagesLayoutDelegate {
     func currentSender() -> SenderType {
@@ -80,9 +89,18 @@ extension ChatViewController: MessagesDisplayDelegate {
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
         return isFromCurrentSender(message: message) ? .black : .white
     }
-//    func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-//         
-//    }
+    func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+        avatarView.isHidden = true
+        
+    }
+    func avatarSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+        return  CGSize(width: 0, height: 0)
+    }
+    
+    func messageStyle(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
+        return .bubble
+    }
+    
     
 }
 
@@ -124,13 +142,20 @@ extension ChatViewController {
     
 }
 
-
-
-
-
-
-
+extension ChatViewController: InputBarAccessoryViewDelegate {
+    func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
+        let message = ModelMessage(user: user, content: text)
+        self.insertNewMEssage(message: message)
     
+    }
     
+}
 
- 
+
+
+
+
+
+
+
+
