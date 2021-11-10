@@ -17,7 +17,9 @@ class TabBarViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+      
         setupTabBar()
+        
     }
     
     init(user:ModelUser) {

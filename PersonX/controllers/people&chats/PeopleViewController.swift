@@ -66,12 +66,9 @@ class PeopleViewController: UIViewController, UISearchControllerDelegate {
         
         setupDataSource()
         
-       
- 
-      
     }
     
-//
+
     //MARK: SetupColllectionView
     private func setupCollectionnView() {
         collectionView = UICollectionView(frame: view.bounds,

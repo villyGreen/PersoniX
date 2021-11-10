@@ -61,7 +61,6 @@ class ActiveChatsCollectionViewCell: UICollectionViewCell,CellConfiguring {
     private func constraints() {
         addSubview(gradientView)
         addSubview(imageView)
-        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         lastMessage.translatesAutoresizingMaskIntoConstraints = false
         userName.translatesAutoresizingMaskIntoConstraints = false

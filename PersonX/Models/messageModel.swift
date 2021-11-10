@@ -10,14 +10,18 @@ import UIKit
 import FirebaseFirestore
 import MessageKit
 
-
+struct imageItem: MediaItem {
+    var url: URL?
+    var image: UIImage?
+    var placeholderImage: UIImage
+    var size: CGSize
+}
 
 
 struct ModelMessage: Hashable, MessageType {
     
-    
-    
-    
+    var image: UIImage?
+    var downloadUrl: URL? = nil
     var sender: SenderType
     var sentDate: Date
     var content: String
@@ -27,16 +31,29 @@ struct ModelMessage: Hashable, MessageType {
         var rep: [String: Any] = [
             "senderId" : sender.senderId,
             "sentDate" : sentDate,
-            "senderUsername" : sender.displayName,
-            "content" : content
+            "senderUsername" : sender.displayName
         ]
-        
+        if let url = downloadUrl {
+            
+            rep["url"] = url.absoluteString
+        } else {
+            rep["content"] = content
+        }
         return rep
     }
     
     
     var kind: MessageKind {
-        return .text(content)
+        if let image = image {
+            let mediaImage = imageItem(url: nil,
+                                       image: nil,
+                                       placeholderImage: image,
+                                       size: image.size)
+            
+            return .photo(mediaImage)
+        } else {
+            return .text(content)
+        }
     }
     
     var messageId: String {
@@ -57,14 +74,32 @@ struct ModelMessage: Hashable, MessageType {
         
         let data = document.data()
         guard let senderId = data["senderId"] as? String else { return nil}
-        guard let sendTime = data["sendTime"] as? Timestamp else { return nil}
+        guard let sendTime = data["sentDate"] as? Timestamp else { return nil}
         guard let senderUserName = data["senderUsername"] as? String else { return nil}
-        guard let content = data["content"] as? String else { return nil}
-        
+//        guard let content = data["content"] as? String else { return nil}
+    
         self.id = document.documentID
-        self.content = content
         self.sender = Sender(senderId: senderId, displayName: senderUserName)
         self.sentDate = sendTime.dateValue()
+        if let content = data["content"] as? String {
+            self.content = content
+            downloadUrl = nil
+        } else if let downloadUrl = data["url"] as? String, let url = URL(string: downloadUrl) {
+            self.downloadUrl = url
+            self.content = ""
+        } else {
+            return nil
+        }
+
+        
+    }
+    
+    init(image: UIImage,user: ModelUser) {
+         self.sender = Sender(senderId: user.id, displayName: user.username)
+        self.image = image
+        self.content = ""
+        self.id = nil
+        sentDate = Date()
         
     }
     
@@ -76,15 +111,12 @@ struct ModelMessage: Hashable, MessageType {
         id = nil
     }
     
-    
-    
-    //    func hash(into hasher: inout Hasher) {
-    //           hasher.combine(id)
-    //       }
-    //
-    //       static func == (lhs: ModelMessage,rhs: ModelMessage) -> Bool {
-    //           return lhs.id == rhs.id
-    //    }
-    
-    
+}
+
+
+extension ModelMessage : Comparable {
+    static func < (lhs: ModelMessage, rhs: ModelMessage) -> Bool {
+        return lhs.sentDate < rhs.sentDate
+    }
+
 }

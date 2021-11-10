@@ -56,7 +56,7 @@ class UserCell: UICollectionViewCell,CellConfiguring {
         
         userNameLabel.topAnchor.constraint(equalTo: userImage.bottomAnchor, constant: 10).isActive = true
         userNameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10).isActive = true
-        userNameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 10).isActive = true
+        userNameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10).isActive = true
         
         
         
