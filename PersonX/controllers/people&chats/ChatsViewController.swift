@@ -54,6 +54,7 @@ class ChatsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("gg");
         setupView()
         setupCollectionnView()
         setupCollectionViewDataSource()
@@ -284,6 +285,7 @@ extension ChatsViewController: UICollectionViewDelegate {
 extension ChatsViewController: WaitingChatProtocol {
     
     func removeWaitingChat(chat: ModelChat) {
+        print("yes")
         FireStoreService.shared.deleteWaitingChat(chat: chat) { (result) in
             switch result {
                 
