@@ -9,29 +9,22 @@
 import UIKit
 import SDWebImage
 
-class WaitingChatCollectionViewCell: UICollectionViewCell,CellConfiguring {
-    
-    
+class WaitingChatCollectionViewCell: UICollectionViewCell, CellConfiguring {
     static var reuseID = "WaitingChatCell"
     let imageView = UIImageView()
-    
-
-    
-    func configure<U>(value: U) where U : Hashable {
+    func configure<U>(value: U) where U: Hashable {
     guard let waitingChat: ModelChat = value as? ModelChat else {
               return
               }
         let imageUrl = URL(string: waitingChat.friendUserImageString)
         imageView.sd_setImage(with: imageUrl, completed: nil)
     }
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         constraints()
         layer.cornerRadius = 10
         clipsToBounds = true
     }
-    
     private func constraints() {
         imageView.contentMode  = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +34,6 @@ class WaitingChatCollectionViewCell: UICollectionViewCell,CellConfiguring {
         imageView.heightAnchor.constraint(equalToConstant: 78).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 78).isActive = true
     }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -11,17 +11,13 @@ import FirebaseAuth
 import FirebaseFirestore
 
 class ListenerService {
-    
     static let shared = ListenerService()
     let db = Firestore.firestore()
-    
     var reference: CollectionReference {
         return db.collection("users")
     }
-    
     let currentUserId = Auth.auth().currentUser?.uid
-    
-    func userObserve(user: [ModelUser],completion: @escaping (Result<[ModelUser],Error>) -> Void) -> ListenerRegistration? {
+    func userObserve(user: [ModelUser], completion: @escaping (Result<[ModelUser], Error>) -> Void) -> ListenerRegistration? {
         var users = user
         let userListener = reference.addSnapshotListener { (querySnapshot, error) in
             guard let snapshot = querySnapshot else {
@@ -30,8 +26,6 @@ class ListenerService {
             }
             snapshot.documentChanges.forEach { (diff) in
                 guard let muser = ModelUser(document: diff.document) else { return }
-                
-                
                 switch diff.type {
                 case .added:
                     guard Auth.auth().currentUser?.email != muser.email else { break }
@@ -48,13 +42,10 @@ class ListenerService {
         }
         return userListener
     }
-    
-    
-    func waitingChatListener(chat: [ModelChat],completion: @escaping ((Result<[ModelChat],Error>) -> Void)  ) -> ListenerRegistration {
+    func waitingChatListener(chat: [ModelChat], completion: @escaping ((Result<[ModelChat], Error>) -> Void)  ) -> ListenerRegistration {
         var chats = chat
-        let reference = db.collection(["users",currentUserId!,"WaitingChats"].joined(separator: "/"))
+        let reference = db.collection(["users",currentUserId!, "WaitingChats"].joined(separator: "/"))
         let chatListener = reference.addSnapshotListener { (querySnapshot, error) in
-            
             guard let snapshot = querySnapshot else {
                 completion(.failure(error!))
                 return
@@ -74,20 +65,15 @@ class ListenerService {
                     guard let index = chats.firstIndex(of: chat) else { return }
                     chats.remove(at: index)
                 }
-                
             }
             completion(.success(chats))
         }
-        
         return chatListener
     }
-    
-    
-    func activeChatListener(chat: [ModelChat],completion: @escaping ((Result<[ModelChat],Error>) -> Void)  ) -> ListenerRegistration {
+    func activeChatListener(chat: [ModelChat], completion: @escaping ((Result<[ModelChat], Error>) -> Void)  ) -> ListenerRegistration {
         var chats = chat
-        let reference = db.collection(["users",currentUserId!,"activeChats"].joined(separator: "/"))
+        let reference = db.collection(["users", currentUserId!, "activeChats"].joined(separator: "/"))
         let chatListener = reference.addSnapshotListener { (querySnapshot, error) in
-            
             guard let snapshot = querySnapshot else {
                 completion(.failure(error!))
                 return
@@ -107,15 +93,11 @@ class ListenerService {
                     guard let index = chats.firstIndex(of: chat) else { return }
                     chats.remove(at: index)
                 }
-                
             }
             completion(.success(chats))
         }
-        
         return chatListener
     }
-    
-    
     func messagesObserve(chat: ModelChat, completion: @escaping (Result<ModelMessage, Error>) -> Void) -> ListenerRegistration? {
         let usersRef = db.collection("users")
         let ref = usersRef.document(currentUserId!).collection("activeChats").document(chat.friendId).collection("messages")
@@ -124,7 +106,6 @@ class ListenerService {
                    completion(.failure(error!))
                    return
                }
-               
                snapshot.documentChanges.forEach { (diff) in
                    guard let message = ModelMessage(document: diff.document) else { return }
                    switch diff.type {
@@ -139,11 +120,4 @@ class ListenerService {
            }
            return messagesListener
        }
-    
-    
-    
-    
-    
-    
-    
 }

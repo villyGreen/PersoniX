@@ -9,9 +9,7 @@
 import UIKit
 
 class GradientView: UIView {
-    
     private let gradientLayer = CAGradientLayer()
-       
        enum Point {
            case topLeading
            case leading
@@ -22,7 +20,6 @@ class GradientView: UIView {
            case topTrailing
            case trailing
            case bottomTrailing
-
            var point: CGPoint {
                switch self {
                case .topLeading:
@@ -46,46 +43,38 @@ class GradientView: UIView {
                }
            }
        }
-       
        @IBInspectable private var startColor: UIColor? {
            didSet {
                setupGradientColors(startColor: startColor, endColor: endColor)
            }
        }
-       
        @IBInspectable private var endColor: UIColor? {
            didSet {
                setupGradientColors(startColor: startColor, endColor: endColor)
            }
        }
-       
        init(from: Point, to: Point, startColor: UIColor?, endColor: UIColor?) {
            self.init()
            setupGradient(from: from, to: to, startColor: startColor, endColor: endColor)
        }
-       
        override init(frame: CGRect) {
            super.init(frame: frame)
        }
-       
        override func layoutSubviews() {
            super.layoutSubviews()
            gradientLayer.frame = bounds
        }
-       
        private func setupGradient(from: Point, to: Point, startColor: UIColor?, endColor: UIColor?) {
            self.layer.addSublayer(gradientLayer)
            setupGradientColors(startColor: startColor, endColor: endColor)
            gradientLayer.startPoint = from.point
            gradientLayer.endPoint = to.point
        }
-       
        private func setupGradientColors(startColor: UIColor?, endColor: UIColor?) {
            if let startColor = startColor, let endColor = endColor {
                gradientLayer.colors = [startColor.cgColor, endColor.cgColor]
            }
        }
-       
        required init?(coder: NSCoder) {
            super.init(coder: coder)
            setupGradient(from: .leading, to: .trailing, startColor: startColor, endColor: endColor)

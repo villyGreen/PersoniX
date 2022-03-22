@@ -9,8 +9,7 @@
 import UIKit
 import SDWebImage
 
-class UserCell: UICollectionViewCell,CellConfiguring {
-    
+class UserCell: UICollectionViewCell, CellConfiguring {
     let userImage = UIImageView(backgroundColor: .systemFill,
                                 contentMode: .scaleAspectFill)
     let userNameLabel = UILabel(textLabel: "text",
@@ -19,36 +18,28 @@ class UserCell: UICollectionViewCell,CellConfiguring {
                                 textColor: .black)
     let containerView = UIView()
     static var reuseID = "UserCell"
-    
-    
-    
     override func prepareForReuse() {
         userImage.image = nil
     }
-    
-    func configure<U>(value: U) where U : Hashable {
-        guard let user:ModelUser = value as? ModelUser else {
+    func configure<U>(value: U) where U: Hashable {
+        guard let user: ModelUser = value as? ModelUser else {
             return
         }
         userNameLabel.text = user.username
         let imageUrl = URL(string: user.avatarStringURL)
         userImage.sd_setImage(with: imageUrl, completed: nil)
     }
-    
     private func setupConstraints() {
         userImage.translatesAutoresizingMaskIntoConstraints = false
         userNameLabel.translatesAutoresizingMaskIntoConstraints = false
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        
         self.addSubview(containerView)
         containerView.addSubview(userImage)
         containerView.addSubview(userNameLabel)
-        
         containerView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        
         userImage.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         userImage.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         userImage.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
@@ -57,11 +48,7 @@ class UserCell: UICollectionViewCell,CellConfiguring {
         userNameLabel.topAnchor.constraint(equalTo: userImage.bottomAnchor, constant: 10).isActive = true
         userNameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10).isActive = true
         userNameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10).isActive = true
-        
-        
-        
     }
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .systemFill
@@ -69,9 +56,7 @@ class UserCell: UICollectionViewCell,CellConfiguring {
         self.clipsToBounds = true
         setupConstraints()
     }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }

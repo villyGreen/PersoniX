@@ -1,11 +1,9 @@
-
 import UIKit
 import MessageKit
 import InputBarAccessoryView
 import FirebaseFirestore
 
 class ChatViewController: MessagesViewController {
-    
     private var messages: [ModelMessage] = []
     private var messageListener: ListenerRegistration?
     let photoButton = InputBarButtonItem(type: .system)
@@ -20,42 +18,33 @@ class ChatViewController: MessagesViewController {
         super.init(nibName: nil, bundle: nil)
         title = chat.friendUsername
     }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     deinit {
         messageListener?.remove()
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         configureMessageInputBar()
-        
         if let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout {
             layout.textMessageSizeCalculator.outgoingAvatarSize = .zero
             layout.textMessageSizeCalculator.incomingAvatarSize = .zero
             layout.photoMessageSizeCalculator.outgoingAvatarSize = .zero
             layout.photoMessageSizeCalculator.incomingAvatarSize = .zero
         }
-        
         messagesCollectionView.backgroundColor = #colorLiteral(red: 0.8371705486, green: 1, blue: 0.8215421855, alpha: 1)
         messageInputBar.delegate = self
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
-        
         messageListener = ListenerService.shared.messagesObserve(chat: chat, completion: { (result) in
             switch result {
-                
             case .success(var message):
                 if let url = message.downloadUrl {
                     StorageServeces.shared.downloadPhoto(url: url) { [weak self](result) in
                         guard let self = self else { return }
                         switch result {
-                            
                         case .success(let image):
                             message.image = image
                             self.insertNewMessage(message: message)
@@ -75,7 +64,6 @@ class ChatViewController: MessagesViewController {
             }
         })
     }
-    
     private func insertNewMessage(message: ModelMessage) {
         guard !messages.contains(message) else { return }
         messages.append(message)
@@ -83,12 +71,10 @@ class ChatViewController: MessagesViewController {
         print(messages.count)
         let isLatestMessage = messages.firstIndex(of: message) == (messages.count - 1)
         let shouldScrollToBottom = messagesCollectionView.isAtBottom && isLatestMessage
-        
         messagesCollectionView.reloadData()
-        
         if shouldScrollToBottom {
             DispatchQueue.main.async {
-                self.messagesCollectionView.scrollToBottom(animated: true)
+                self.messagesCollectionView.scrollToLastItem(animated: true)
             }
         }
     }
@@ -109,43 +95,32 @@ extension ChatViewController {
         messageInputBar.inputTextView.layer.cornerRadius = 18.0
         messageInputBar.inputTextView.layer.masksToBounds = true
         messageInputBar.inputTextView.scrollIndicatorInsets = UIEdgeInsets(top: 14, left: 0, bottom: 14, right: 0)
-        
-        
         messageInputBar.layer.shadowColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         messageInputBar.layer.shadowRadius = 5
         messageInputBar.layer.shadowOpacity = 0.3
         messageInputBar.layer.shadowOffset = CGSize(width: 0, height: 4)
-        
         configureSendButton()
         configureSupportButton()
     }
-    
-    
-    
     @objc private func imagePicker() {
-        
         let picker = UIImagePickerController()
         picker.allowsEditing = true
         picker.delegate = self
         let alert = UIAlertController(title: nil,
                                       message: nil,
                                       preferredStyle: .actionSheet)
-        
         let photo = UIAlertAction(title: "Фото", style: .default) { _ in
             picker.sourceType = .photoLibrary
             self.present(picker,
                          animated: true,
                          completion: nil)
-            
         }
-        
         let camera = UIAlertAction(title: "Камера", style: .default) { _ in
             picker.sourceType = .camera
             self.present(picker,
                          animated: true,
                          completion: nil)
         }
-        
         let cancel = UIAlertAction(title: "Назад", style: .destructive, handler: nil)
         alert.addAction(photo)
         alert.addAction(camera)
@@ -154,7 +129,6 @@ extension ChatViewController {
                      animated: true,
                      completion: nil)
     }
-    
     func configureSupportButton() {
         photoButton.setImage(image, for: .normal)
         photoButton.addTarget(self, action: #selector(imagePicker), for: .touchUpInside)
@@ -165,50 +139,39 @@ extension ChatViewController {
         messageInputBar.setStackViewItems([photoButton],
                                           forStack: .left,
                                           animated: true)
-        
         let gesture = UILongPressGestureRecognizer()
         gesture.minimumPressDuration = 1
         gesture.allowableMovement = 0
         gesture.addTarget(self, action: #selector(changeToAudio))
         photoButton.addGestureRecognizer(gesture)
     }
-    
     @objc private func changeToAudio() {
         if isMicro {
-            print("true")
             image = #imageLiteral(resourceName: "audio voice")
             isMicro = false
-            
         } else {
-            print("false");
             image = #imageLiteral(resourceName: "camera")
             isMicro = true
         }
-        
         self.photoButton.setImage(self.image, for: .normal)
-        
-        
     }
-    
     private func sendPhotos(image: UIImage) {
         StorageServeces.shared.uploadPhoto(image: image,
                                            chat: chat) { (result) in
                                             switch result {
-                                                
                                             case .success(let url):
                                                 var image = ModelMessage(image: image,
                                                                          user: self.user)
-                                                
                                                 image.downloadUrl = url
                                                 FireStoreService.shared.sendMessage(chat: self.chat,
                                                                                     message: image) { (result) in
-                                                                                        switch result {
-                                                                                            
-                                                                                        case .success():
-                                                                                            self.messagesCollectionView.scrollToBottom()
-                                                                                        case .failure(let error):
-                                                                                            self.createAlert(title: "Ошибка",
-                                                                                                             message: error.localizedDescription, completion: nil)
+                                            switch result {
+                                                case .success(let response):
+                                                    print(response)
+                                                    self.messagesCollectionView.scrollToLastItem()
+                                                case .failure(let error):
+                                                    self.createAlert(title: "Ошибка",
+                                                    message: error.localizedDescription, completion: nil)
                                                                                         }}
                                             case .failure(let error):
                                                 self.createAlert(title: "Ошибка",
@@ -217,7 +180,6 @@ extension ChatViewController {
                                             }
         }
     }
-    
     func configureSendButton() {
         messageInputBar.sendButton.setImage(UIImage(named: "sendButton"), for: .normal)
         messageInputBar.setRightStackViewWidthConstant(to: 56, animated: false)
@@ -232,19 +194,15 @@ extension ChatViewController: MessagesDataSource {
     func currentSender() -> SenderType {
         return Sender(senderId: user.id, displayName: user.username)
     }
-    
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
         return messages[indexPath.item]
     }
-    
     func numberOfItems(inSection section: Int, in messagesCollectionView: MessagesCollectionView) -> Int {
         return messages.count
     }
-    
     func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
         return 1
     }
-    
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
         if indexPath.item % 4 == 0 {
             return NSAttributedString(
@@ -257,14 +215,13 @@ extension ChatViewController: MessagesDataSource {
         }
     }
 }
-
 // MARK: - MessagesLayoutDelegate
 extension ChatViewController: MessagesLayoutDelegate {
     func footerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
         return CGSize(width: 0, height: 8)
     }
-    
-    func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+    func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath,
+                            in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         if (indexPath.item) % 4 == 0 {
             return 30
         } else {
@@ -275,55 +232,48 @@ extension ChatViewController: MessagesLayoutDelegate {
 
 // MARK: - MessagesDisplayDelegate
 extension ChatViewController: MessagesDisplayDelegate {
-    func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+    func backgroundColor(for message: MessageType, at indexPath: IndexPath,
+                         in messagesCollectionView: MessagesCollectionView) -> UIColor {
         return isFromCurrentSender(message: message) ? .white : #colorLiteral(red: 0.7882352941, green: 0.631372549, blue: 0.9411764706, alpha: 1)
     }
-    
-    func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+    func textColor(for message: MessageType, at indexPath: IndexPath,
+                   in messagesCollectionView: MessagesCollectionView) -> UIColor {
         return isFromCurrentSender(message: message) ? #colorLiteral(red: 0.2392156863, green: 0.2392156863, blue: 0.2392156863, alpha: 1) : .white
     }
-    
-    
-    
-    func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+    func configureAvatarView(_ avatarView: AvatarView, for message: MessageType,
+                             at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         avatarView.isHidden = true
     }
-    
-    func avatarSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+    func avatarSize(for message: MessageType, at indexPath: IndexPath,
+                    in messagesCollectionView: MessagesCollectionView) -> CGSize {
         return .zero
     }
-    
-    func messageStyle(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
+    func messageStyle(for message: MessageType, at indexPath: IndexPath,
+                      in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
         return .bubble
     }
 }
-
 // MARK: - MessageInputBarDelegate
 extension ChatViewController: InputBarAccessoryViewDelegate {
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         let message = ModelMessage(user: user, content: text)
-        
         FireStoreService.shared.sendMessage(chat: chat, message: message) { (result) in
             switch result {
             case .success:
-                self.messagesCollectionView.scrollToBottom()
+                self.messagesCollectionView.scrollToLastItem()
             case .failure(let error):
                 self.createAlert(title: "Ошибка",
                                  message: error.localizedDescription,
                                  completion: nil)
             }
         }
-        
         inputBar.inputTextView.text = ""
     }
 }
-
 extension UIScrollView {
-    
     var isAtBottom: Bool {
         return contentOffset.y >= verticalOffsetForBottom
     }
-    
     var verticalOffsetForBottom: CGFloat {
         let scrollViewHeight = bounds.height
         let scrollContentSizeHeight = contentSize.height
@@ -332,12 +282,9 @@ extension UIScrollView {
         return scrollViewBottomOffset
     }
 }
-
-
-
-
-extension ChatViewController: UIImagePickerControllerDelegate , UINavigationControllerDelegate{
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+extension ChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+func imagePickerController(_ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard  let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
             return
         }
@@ -345,4 +292,3 @@ extension ChatViewController: UIImagePickerControllerDelegate , UINavigationCont
         sendPhotos(image: image)
     }
 }
-

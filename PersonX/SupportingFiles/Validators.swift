@@ -7,15 +7,8 @@
 //
 
 import Foundation
-
-
-
-
 class Validators {
-    
-    
-    static func isFiled(username: String?,description: String?,sex: String?)  -> Bool {
-        
+    static func isFiled(username: String?, description: String?, sex: String?)  -> Bool {
         guard let sex = sex,
             let description = description,
             let username = username,

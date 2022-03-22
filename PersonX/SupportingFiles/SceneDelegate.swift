@@ -12,8 +12,6 @@ import  FirebaseAuth
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
       
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -24,7 +22,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let user = Auth.auth().currentUser {
             FireStoreService.shared.getUserData(user: user) { (result) in
                 switch result {
-                    
                 case .success(let user):
                     self.window?.rootViewController = TabBarViewController(user: user)
                 case .failure(let error):

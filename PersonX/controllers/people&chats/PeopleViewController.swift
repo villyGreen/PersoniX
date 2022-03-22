@@ -11,11 +11,10 @@ import FirebaseAuth
 import FirebaseFirestore
 
 class PeopleViewController: UIViewController, UISearchControllerDelegate {
-    
     var listener: ListenerRegistration?
-    let Muser: ModelUser
+    let muser: ModelUser
     var users = [ModelUser]()
-    enum Section: Int,CaseIterable {
+    enum Section: Int, CaseIterable {
         case users
         func description(usersCount: Int) -> String {
             switch self {
@@ -24,66 +23,53 @@ class PeopleViewController: UIViewController, UISearchControllerDelegate {
             }
         }
     }
-    
     deinit {
         listener?.remove()
     }
-    
-    var dataSource: UICollectionViewDiffableDataSource<Section,ModelUser>?
+    var dataSource: UICollectionViewDiffableDataSource<Section, ModelUser>?
     var collectionView: UICollectionView?
-    
-    init(user:ModelUser) {
-        self.Muser = user
+    init(user: ModelUser) {
+        self.muser = user
         super.init(nibName: nil, bundle: nil)
-        title = Muser.username
+        title = muser.username
     }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    //MARK: ViewDidLoad
+    // MARK: - ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         setupCollectionnView()
-        setupCompositionalLayout()
-        reloadData(searchText: nil)
+//        setupCompositionalLayout()
+//        reloadData(searchText: nil)
         listener = ListenerService.shared.userObserve(user: users) { (result) in
                    switch result {
-                       
                    case .success(let users):
                        self.users = users
                        self.reloadData(searchText: nil)
-                       
                    case .failure(let error):
                        self.createAlert(title: "Ошибка",
                                         message: error.localizedDescription, completion: nil)
                    }
-                   
                }
-        
-        
         setupDataSource()
-        
     }
-    
-
-    //MARK: SetupColllectionView
+    // MARK: SetupColllectionView
     private func setupCollectionnView() {
         collectionView = UICollectionView(frame: view.bounds,
                                           collectionViewLayout: setupCompositionalLayout())
-        collectionView!.autoresizingMask = [.flexibleWidth,.flexibleHeight]
+        collectionView!.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView!.backgroundColor = #colorLiteral(red: 0.968627451, green: 0.9764705882, blue: 1, alpha: 1)
         view.addSubview(collectionView!)
         collectionView?.delegate = self
-        collectionView?.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader , withReuseIdentifier: SectionHeader.reuseId)
-        collectionView?.register(UserCell.self, forCellWithReuseIdentifier:UserCell.reuseID)
+        collectionView?.register(SectionHeader.self,
+                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader ,
+                                 withReuseIdentifier: SectionHeader.reuseId)
+        collectionView?.register(UserCell.self,
+                                 forCellWithReuseIdentifier: UserCell.reuseID)
     }
-    
-    
-    
-    //MARK: Setup CompositionalLayout
+    // MARK: Setup CompositionalLayout
     private func setupCompositionalLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex, _) ->
             NSCollectionLayoutSection? in
@@ -92,22 +78,19 @@ class PeopleViewController: UIViewController, UISearchControllerDelegate {
             switch section {
             case .users:
                 return self.setupUserSection()
-                
             }
         }
         let config = UICollectionViewCompositionalLayoutConfiguration()
         config.interSectionSpacing = 20
         layout.configuration = config
-        
         return layout
     }
-    
     private func setupUserSection() -> NSCollectionLayoutSection {
-        
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
-        
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+                                              heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(0.6))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+                                               heightDimension: .fractionalWidth(0.6))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
                                                        subitem: item,
                                                        count: 2)
@@ -121,27 +104,20 @@ class PeopleViewController: UIViewController, UISearchControllerDelegate {
         let header = createHeaderSection()
         section.boundarySupplementaryItems = [header]
         return section
-        
     }
-    
-    
     // MARK: Setup Snapshot
     private func reloadData(searchText: String?) {
         let filtered = users.filter { user -> Bool in
             user.contains(searchText: searchText)
         }
-        
         var snapShot = NSDiffableDataSourceSnapshot<Section, ModelUser>()
         snapShot.appendSections([.users])
         snapShot.appendItems(filtered, toSection: .users)
-        dataSource?.apply(snapShot,animatingDifferences: true)
+        dataSource?.apply(snapShot, animatingDifferences: true)
     }
-    
-    
-    
-    
     private func setupDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section,ModelUser>(collectionView: collectionView!, cellProvider: { (collectionView, indexPath, user) -> UICollectionViewCell? in
+        dataSource = UICollectionViewDiffableDataSource<Section, ModelUser>(collectionView: collectionView!,
+            cellProvider: { (collectionView, indexPath, user) -> UICollectionViewCell? in
             guard let section = Section(rawValue: indexPath.section) else {
                 fatalError()
             }
@@ -153,28 +129,21 @@ class PeopleViewController: UIViewController, UISearchControllerDelegate {
                                           indexPath: indexPath)
             }
         })
-        
-        dataSource?.supplementaryViewProvider = {
-            collectionView,kind,indexPath in
-            
-            guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.reuseId, for: indexPath) as? SectionHeader else {
+        dataSource?.supplementaryViewProvider = { collectionView, kind, indexPath in
+            guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
+            withReuseIdentifier: SectionHeader.reuseId, for: indexPath) as? SectionHeader else {
                 fatalError()
             }
             guard  let section = Section(rawValue: indexPath.section) else {
                 fatalError()
             }
-            
             sectionHeader.configureHeader(text: section.description(usersCount: self.users.count),
                                           font: .systemFont(ofSize: 28, weight: .light),
                                           textColor: #colorLiteral(red: 0.04945700034, green: 0.04515571317, blue: 0.1189446865, alpha: 1), textAlpha: 0.85)
             return sectionHeader
         }
-        
-        
-        
     }
-    
-    //MARK: SetupView
+    // MARK: SetupView
     private func setupView() {
         view.backgroundColor = .white
         navigationController?.navigationBar.titleTextAttributes = [.font: UIFont.systemFont(ofSize: 20, weight: .light)]
@@ -191,23 +160,20 @@ class PeopleViewController: UIViewController, UISearchControllerDelegate {
         searchController.obscuresBackgroundDuringPresentation  = false
         searchController.searchBar.delegate = self
     }
-    
     @objc private func signOut() {
         let currentEmail = Auth.auth().currentUser?.email
-        let alert = UIAlertController(title:"Предупреждение",
-                                      message: "Вы действительно хотите выйти из \(currentEmail!)", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Предупреждение",
+        message: "Вы действительно хотите выйти из \(currentEmail!)", preferredStyle: .alert)
         let yesButton = UIAlertAction(title: "Да", style: .destructive) { _ in
-            
             do {
                 try Auth.auth().signOut()
                 UIApplication.shared.keyWindow?.rootViewController = AuthViewController()
                 if Auth.auth().currentUser != nil {
                     print("Error, is  id not deleted")
                 }
-            } catch (let error) {
-                print(error.localizedDescription)
+            } catch {
+              // do something ...
             }
-            
         }
         let noButton = UIAlertAction(title: "Нет",
                                      style: .default, handler: nil)
@@ -217,34 +183,25 @@ class PeopleViewController: UIViewController, UISearchControllerDelegate {
                      animated: true,
                      completion: nil)
     }
-    
 }
-
-
-//MARK: Create HeaderSection
+// MARK: Create HeaderSection
 private func createHeaderSection() -> NSCollectionLayoutBoundarySupplementaryItem {
-    
     let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
                                             heightDimension: .estimated(1))
-    
     let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize,
-                                                                    elementKind: UICollectionView.elementKindSectionHeader,
-                                                                    alignment: .top)
+                elementKind: UICollectionView.elementKindSectionHeader,
+                                            alignment: .top)
     return sectionHeader
 }
 
-//MARK: Extensions
-extension PeopleViewController: UISearchBarDelegate,UICollectionViewDelegate {
-    
+// MARK: Extensions
+extension PeopleViewController: UISearchBarDelegate, UICollectionViewDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         reloadData(searchText: searchText)
     }
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard  let user = self.dataSource?.itemIdentifier(for: indexPath) as? ModelUser else { return }
-        
+        guard  let user = self.dataSource?.itemIdentifier(for: indexPath) else { return }
         guard let profileVc = ProfileViewController(user: user) else { return }
         self.present(profileVc, animated: true, completion: nil)
-        
     }
 }

@@ -7,18 +7,11 @@
 //
 
 import UIKit
-
-
-
-
 class CustomTextField: UITextField {
-    
     let leftImage = UIImageView(image: #imageLiteral(resourceName: "smileLogo"), contentMode: .scaleAspectFill)
     let rightButton = UIButton()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         placeholder = "Write something..."
         layer.cornerRadius = 30
         borderStyle = .roundedRect
@@ -36,38 +29,27 @@ class CustomTextField: UITextField {
         leftView?.frame = CGRect(x: 0, y: 0, width: 19, height: 19)
         leftViewMode = .always
         font = UIFont(name: "Avenir", size: 15)
-        
     }
     override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
         var rect = super.leftViewRect(forBounds: bounds)
         rect.origin.x += 12
         return rect
     }
-    
     override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
         var rect = super.rightViewRect(forBounds: bounds)
         rect.origin.x += -12
         return rect
     }
-    
-    
-    
     override func textRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.insetBy(dx: 36, dy: 0)
     }
-    
     override func placeholderRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.insetBy(dx: 36, dy: 0)
     }
-    
     override func editingRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.insetBy(dx: 36, dy: 0)
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
-    
-    
 }

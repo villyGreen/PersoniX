@@ -8,11 +8,8 @@
 
 import UIKit
 
-
 extension UILabel {
-    
-    
-    convenience init(textLabel: String,fontLabel: UIFont?,textAlpha: CGFloat,textColor: UIColor) {
+    convenience init(textLabel: String, fontLabel: UIFont?, textAlpha: CGFloat, textColor: UIColor) {
         self.init()
         self.text = textLabel
         self.font = fontLabel
